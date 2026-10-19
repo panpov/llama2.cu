@@ -72,6 +72,9 @@ testcc:
 	$(CC) -DVERBOSITY=$(VERBOSITY) -O3 -o testc test.c -lm
 	./testc
 
+testccnv:
+	$(NVCC) -DVERBOSITY=$(VERBOSITY) -O3 -o testcnv test.cu -lm -lcublas -DUSE_CUDA
+
 # run cuda
 .PHONY: runcuda
 runcuda: run.cu
