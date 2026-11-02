@@ -38,11 +38,6 @@ runomp: run.c
 	$(CC) -Ofast -fopenmp -march=native run.c  -lm  -o run
 	$(CC) -Ofast -fopenmp -march=native runq.c  -lm  -o runq
 
-.PHONY: win64
-win64:
-	x86_64-w64-mingw32-gcc -Ofast -D_WIN32 -o run.exe -I. run.c win.c
-	x86_64-w64-mingw32-gcc -Ofast -D_WIN32 -o runq.exe -I. runq.c win.c
-
 # compiles with gnu99 standard flags for amazon linux, coreos, etc. compatibility
 .PHONY: rungnu
 rungnu:
@@ -72,13 +67,15 @@ testcc:
 	$(CC) -DVERBOSITY=$(VERBOSITY) -O3 -o testc test.c -lm
 	./testc
 
+###################################################################################################
+	
 testccnv:
 	$(NVCC) -DVERBOSITY=$(VERBOSITY) -O3 -o testcnv test.cu -lm -lcublas -DUSE_CUDA
 
 # run cuda
 .PHONY: runcuda
 runcuda: run.cu
-	$(NVCC) -DUSE_CUDA -O3 -o runcuda run.cu -lm -lcublas
+	$(NVCC) -DUSE_CUDA -O3 -o runcu run.cu -lm -lcublas
 
 # run debug cuda
 .PHONY: rundebugcuda
@@ -94,3 +91,4 @@ runnotcuda: run.cu
 clean:
 	rm -f run
 	rm -f runq
+	rm -f runcu

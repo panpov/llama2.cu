@@ -1,22 +1,39 @@
 #!/bin/bash
 
+if [ "$#" -lt 1 ]; then
+    echo "Error: Missing test file."
+    echo "Usage: $0 <source.cu> <number of runs>"
+    exit 1
+fi
+
+if [[ ! "$1" == *.cu ]]; then
+    echo "Error: File must be a CUDA source file ending in .cu"
+    exit 1
+fi
+
+if [ "$#" -lt 2 ]; then
+    echo "Number of runs not specified. Defaulting to 3."
+fi
+
+SRC="$1"
+BASE_NAME=$(basename "$SRC")
+BIN="./${BASE_NAME//./}"
+NUM_RUNS="${2:-3}"
+
 # Configuration
-SRC="run.cu"
-BIN="./runcuda"
 MODELS=("stories15M.bin" "stories42M.bin" "stories110M.bin")
 PROMPT="One day, Lily met a Shoggoth"
 STEPS=256
 TEMP=0.8
 TOP_P=0.9
 SEED=42
-NUM_RUNS=30
 
 # 1. Compile run_new.cu targeting the DGX Spark GB10 architecture (sm_121 via native)
 echo "Compiling $SRC for NVIDIA DGX Spark..."
 # Once optmized, run: nvcc -O3 --use_fast_math -arch=native "$SRC" -o "$BIN" -lcublas
 nvcc -O3 "$SRC" -o "$BIN" -lm -lcublas
 if [ $? -ne 0 ]; then
-    echo "Compilation failed! Please check your CUDA toolkit installation."
+    echo "Compilation failed! Please check arguments and/or CUDA toolkit installation."
     exit 1
 fi
 
