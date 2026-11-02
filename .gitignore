@@ -2,9 +2,12 @@
 save/
 llama_env/
 __pycache__/
+test_logs/
+.venv/
 run
 runq
-runcuda
+runcu
+run_umacu
 *.exe
 *.obj
 *.exp
